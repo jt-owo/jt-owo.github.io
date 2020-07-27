@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./resources/css/global.css">
     <link rel="stylesheet" href="./resources/css/layout.css">
     <link rel="stylesheet" href="./resources/css/projects.css">
+    <script src="./resources/scripts/projects.js"></script>
     <title>jt-owo</title>
 </head>
 <body>
@@ -17,9 +18,58 @@
                 <li><a href="/">PROJECTS</a></li>
             </ul>
         </header>
-        <div id="content"></div>
+        <div id="content">
+            <div class="container">
+                <span class="heading">MY PROJECTS</span>
+                <div class="project-container">
+                    <div class="project" onclick="openRep('tune')">
+                        <span class="image tune">&nbsp;</span>
+                        <div class="overlay">
+                            <div class="content">
+                                <div class="name">tune.</div>
+                                <div class="description">tune. is a customizable media player for Windows, macOS and Linux</div>
+                                <div class="repo">(Click to open the Repository)</div>
+                                <div class="languages">
+                                    <span class="badge typescript">TypeScript</span>
+                                    <span class="badge css">CSS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project" onclick="openRep('AudioSwitch')">
+                        <span class="text">AUDIO SWITCH</span>
+                        <div class="overlay">
+                            <div class="content">
+                                <div class="name">AudioSwitch</div>
+                                <div class="description">A system tray program to change the default audio device with a shortcut</div>
+                                <div class="repo">(Click to open the Repository)</div>
+                                <div class="languages">
+                                    <span class="badge csharp">C#</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project">
+                        <span class="text">CRAWL</span>
+                        <div class="overlay">
+                            <div class="content">
+                                <div class="name">Crawl</div>
+                                <div class="description">A commandline Roguelike for Windows</div>
+                                <div class="repo">(Repository currently private)</div>
+                                <div class="languages">
+                                    <span class="badge cplusplus">C++</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="center">
+                    <span class="project-mobile-text">Project View is currently not supported for mobile devices</span>
+                </div>
+            </div>
+        </div>
         <footer>
-            <span>jt-owo &copy; 2020</span>
+            <span>&copy; 2020 jt-owo</span>
         </footer>
     </div>
 </body>

@@ -1,0 +1,82 @@
+.icon-container {
+    height: 100%;
+
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-container span {
+    padding-top: 5px;
+}
+
+.icon {
+    background-repeat: no-repeat;
+}
+
+.submenu-content li.submenu-item.icon {
+    background-size: 22px !important;
+}
+
+#desktop .icon {
+    height: 32px !important;
+    width: 32px !important;
+    background-size: 32px !important;
+    display: inline-block;
+}
+
+#taskbar .icon {
+    height: 16px !important;
+    width: 16px !important;
+    background-size: 16px !important;
+    display: inline-block;
+}
+
+.icon.recycleBin {
+    background-image: url('../icons/recycle_bin_empty-2.png');
+}
+
+.icon.computer {
+    background-image: url('../icons/computer_explorer-2.png');
+}
+
+.icon.dir-closed {
+    background-image: url('../icons/directory_closed-3.png');
+}
+
+.icon.console {
+    background-image: url('../icons/console_prompt-0.png');
+}
+
+.icon.notepad {
+    background-image: url('../icons/notepad-4.png');
+}
+
+.icon.shutdown {
+    background-image: url('../icons/shut_down_normal-3.png');
+}
+
+.icon.settings {
+    background-image: url('../icons/settings_gear-0.png');
+}
+
+.icon.logoff {
+    background-image: url('../icons/key_win-0.png');
+}
+
+.icon.run {
+    background-image: url('../icons/application_hourglass_small_cool-4.png')
+}
+
+.icon.png {
+    background-image: url('../icons/imagpng-1.png');
+}
+
+.icon.mp3 {
+    background-image: url('../icons/soundgrn-2.png');
+}
+
+.icon.github {
+    background-image: url('../icons/github.png');
+}

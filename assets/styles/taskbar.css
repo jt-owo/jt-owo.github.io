@@ -1,0 +1,81 @@
+#taskbar {
+    flex: 0 1 var(--t-height);
+    background-color: var(--silver);
+    display: flex;
+    flex-flow: row;
+
+    font-size: 12px;
+    padding: 2px;
+    box-shadow: inset 1px 0 var(--white);
+    border-top: 2px solid #F4F4F4;
+    border-bottom: 2px solid #4E4E4E;
+}
+
+#taskbar .taskbar-item {
+    width: var(--t-item-h);
+    height: var(--t-item-h);
+    line-height: var(--t-item-h);
+    text-align: center;
+    user-select: none;
+
+    font-size: 12px;
+    font-family: Arial;
+    font-weight: 400;
+    color: var(--font-dark);
+    padding: 2px 0 0 1px;
+}
+
+#taskbar .taskbar-item:hover {
+    background-color: var(--silver-hover);
+}
+
+#taskbar .taskbar-item.focused,
+#taskbar .taskbar-item:active {
+    border-top: 2px solid var(--black);
+    border-left: 2px solid var(--black);
+    border-right: 2px solid var(--white);
+    border-bottom: 2px solid var(--white);
+    box-shadow: inset 1px 1px var(--gray);
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2M8cODAf3t7ewbG/////z948CADAFuqCj64BtLKAAAAAElFTkSuQmCC);
+}
+
+#taskbar #start-button {
+    margin: 0 5px 2px 2px;
+    padding: 5px;
+    background-color: var(--silver);
+    box-shadow: inset 1px 1px #DFDFDF, 1px 0 var(--black), 0 1px var(--black), 1px 1px var(--black);
+    border-top: 2px solid var(--white);
+    border-left: 2px solid var(--white);
+    border-right: 2px solid var(--gray);
+    border-bottom: 2px solid var(--gray);
+    user-select: none;
+}
+
+#taskbar #start-button.active {
+    border-top: 2px solid var(--black);
+    border-left: 2px solid var(--black);
+    border-right: 2px solid var(--white);
+    border-bottom: 2px solid var(--white);
+    box-shadow: inset 1px 1px var(--gray);
+}
+
+#taskbar #start-button .ico {
+    width: 45px;
+    height: 14px;
+    background-image: url('../icons/start-button.png');
+    background-repeat: no-repeat;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#taskbar #taskbar-system-tray {
+    height: var(--t-height);
+    line-height: calc(var(--t-height) - 4px);
+    margin-left: auto;
+    user-select: none;
+    padding: 0 10px;
+    border-top: 2px solid var(--gray);
+    border-left: 2px solid var(--gray);
+    border-right: 2px solid var(--white);
+    border-bottom: 2px solid var(--white);
+}

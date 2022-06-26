@@ -1,0 +1,22 @@
+:root {
+    /* COLORS */
+    --silver: #C0C0C0;
+    --silver-hover: #D0D0D0;
+    --gray: #808080;
+    --white: #FFF;
+    --black: #000;
+
+    --font-light: #FFF;
+    --font-dark: #000;
+
+    --win-blue: #00008B;
+    --win-light-blue: #1084D0;
+
+    /* CONSTANTS */
+    --d-item-h: 64px;
+    --d-item-w: 64px;
+
+    --t-height: 30px;
+    --t-item-h: 28px;
+    --t-item-w: 22px;
+}

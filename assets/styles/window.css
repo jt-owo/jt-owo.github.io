@@ -1,0 +1,108 @@
+.win {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    font-size: 11px;
+    box-shadow: inset -1px -1px #0A0A0A, inset 1px 1px #DFDFDF, inset -2px -2px var(--gray), inset 2px 2px var(--white);
+    padding: 3px;
+    width: 250px;
+    background-color: var(--silver);
+    user-select: none;
+}
+
+.win .win-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 2px 3px 3px;
+    background: linear-gradient(90deg, var(--win-blue), var(--win-light-blue));
+}
+
+.win .win-title .win-title-text {
+    color: var(--white);
+    margin-right: 25px;
+    font-weight: 600;
+}
+
+.win .win-title .win-title-controls {
+    display: flex;
+}
+
+.win .win-title .win-title-controls .button {
+    min-height: 14px;
+    min-width: 16px;
+    padding: 0;
+    background-repeat: no-repeat;
+    margin-left: 2px;
+}
+
+.win .win-title .win-title-controls .button.minimize {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='6' height='2' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23000' d='M0 0h6v2H0z'/%3E%3C/svg%3E");
+    background-position: bottom 3px left 4px;
+}
+
+.win .win-title .win-title-controls .button.maximize {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='9' height='9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9 0H0v9h9V0zM8 2H1v6h7V2z' fill='%23000'/%3E%3C/svg%3E");
+    background-position: top 2px left 3px;
+}
+
+.win .win-title .win-title-controls .button.close {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='8' height='7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0 0h2v1h1v1h2V1h1V0h2v1H7v1H6v1H5v1h1v1h1v1h1v1H6V6H5V5H3v1H2v1H0V6h1V5h1V4h1V3H2V2H1V1H0V0z' fill='%23000'/%3E%3C/svg%3E");
+    background-position: top 3px left 4px;
+}
+
+.win .win-content {
+    margin: 8px;
+}
+
+.win .win-content p {
+    max-width: 50rem;
+    line-height: 1.5;
+    padding: 5px 0;
+}
+
+.win .win-status-bar {
+    display: flex;
+    gap: 1px;
+    margin: 0 1px;
+    font-size: 11px;
+}
+
+.win .win-status-bar-field {
+    flex-grow: 1;
+    line-height: 1rem;
+    box-shadow: inset -1px -1px #DFDFDF, inset 1px 1px var(--gray);
+    margin: 0;
+    padding: 2px 3px;
+}
+
+.task-list,
+.task-list-header {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.task-list-header th {
+    line-height: 23px;
+    text-align: center;
+    background: var(--silver);
+    box-shadow: inset -1px -1px #0A0A0A, inset 1px 1px var(--white), inset -2px -2px var(--gray), inset 2px 2px #DFDFDF;
+    user-select: none;
+}
+
+.task-list tr:active,
+.task-list tr.selected {
+    border: 1px dotted var(--black);
+}
+
+.task-list td {
+    text-align: right;
+    padding-right: 2px;
+}
+
+#task-manager.win {
+    min-width: 400px;
+}

@@ -1,0 +1,90 @@
+#menu {
+    display: none;
+    position: absolute;
+    bottom: 38px;
+    flex-flow: row;
+    align-items: stretch;
+    font-size: 13px;
+    background-color: var(--silver);
+    border-left: 2px solid var(--white);
+    border-top: 2px solid var(--white);
+    border-right: 2px solid var(--gray);
+    z-index: 99;
+    user-select: none;
+}
+
+#menu.open {
+    display: flex;
+}
+
+#menu .menu-sidebar {
+    width: 25px;
+    background: linear-gradient(to bottom, var(--win-blue), var(--win-light-blue));
+}
+
+#menu .menu-sidebar .menu-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: -20px;
+    padding: 4px 0 3px 0;
+    font-size: 18px;
+    color: var(--font-light);
+    transform: rotate(-90deg);
+    transform-origin: 0% 0%;
+}
+
+#menu .menu-item {
+    padding: 15px 70px 15px 40px;
+    background-position: 5px 50%;
+}
+
+#menu .menu-item:hover {
+    background-color: var(--win-blue);
+    color: var(--font-light);
+}
+
+.submenu {
+    position: relative;
+}
+
+.submenu:after {
+    position: relative;
+    content: "►";
+    float: right;
+    left: 65px;
+}
+
+.submenu .submenu-content {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    min-width: 100%;
+    color: var(--font-dark);
+    border-top: 2px solid var(--white);
+    border-left: 2px solid var(--white);
+    border-right: 2px solid var(--gray);
+    border-bottom: 2px solid var(--gray);
+    background-color: var(--silver);
+}
+
+.submenu .submenu-content.first {
+    top: -2px;
+}
+
+.submenu:hover .submenu-content {
+    display: block;
+}
+
+.submenu .submenu-content .submenu-item {
+    padding: 6px 10px 6px 40px;
+    background-position: 5%;
+    background-size: 22px;
+    white-space: nowrap;
+}
+
+.submenu .submenu-content .submenu-item:hover {
+    background-color: var(--win-blue);
+    color: var(--font-light);
+}

@@ -1,0 +1,53 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    display: flex;
+    flex-flow: column;
+    flex-wrap: nowrap;
+
+    background-color: teal;
+}
+
+div.button-group {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 5px;
+}
+
+div.button,
+input[type=button],
+input[type=reset],
+input[type=submit],
+button {
+    min-height: 23px;
+    line-height: 23px;
+    min-width: 75px;
+    margin-left: 6px;
+    text-align: center;
+    background: var(--silver);
+    box-shadow: inset -1px -1px #0A0A0A, inset 1px 1px var(--white), inset -2px -2px var(--gray), inset 2px 2px #DFDFDF;
+    user-select: none;
+}
+
+div.button:active {
+    box-shadow: inset -1px -1px var(--white), inset 1px 1px #0A0A0A, inset -2px -2px #DFDFDF, inset 2px 2px var(--gray);
+}
+
+div.container {
+    background: var(--white);
+    box-shadow: inset -1px -1px var(--white), inset 1px 1px var(--gray), inset -2px -2px #DFDFDF, inset 2px 2px #0A0A0A;
+    margin: 0;
+    min-height: 250px;
+}

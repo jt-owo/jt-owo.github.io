@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="./assets/styles/icon.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <script src="./scripts/Taskbar.js"></script>
+    <script src="./scripts/Window.js"></script>
     <title>jt-owo</title>
 </head>
 <script>
@@ -27,6 +28,11 @@
 
         initTaskbar();
     });
+
+    function openProjects() {
+        const projects = document.getElementById("projects");
+        DragWindow.show("My Projects", projects);
+    }
 </script>
 
 <body>
@@ -43,10 +49,10 @@
                 <span>Computer</span>
             </div>
         </div>
-        <div class="desktop-item">
+        <div class="desktop-item" onclick="openProjects();">
             <div class="icon-container">
                 <i class="icon dir-closed"></i>
-                <span>Documents</span>
+                <span>My Projects</span>
             </div>
         </div>
         <div class="desktop-item" onclick="window.open('https://github.com/jt-owo', '_blank').focus();">
@@ -55,7 +61,7 @@
                 <span>My Github</span>
             </div>
         </div>
-        <div id="task-manager" class="win">
+        <div id="task-manager" class="win" style="display: none;">
             <div class="win-title">
                 <div class="win-title-text">Task Manager</div>
                 <div class="win-title-controls">
@@ -66,35 +72,37 @@
             </div>
             <div class="win-content">
                 <div class="container">
-                    <table class="task-list-header">
-                        <colgroup>
-                            <col width="100" />
-                            <col width="070" />
-                            <col width="050" />
-                            <col width="050" />
-                            <col width="050" />
-                        </colgroup>
-                        <tr>
-                            <th>Process name</th>
-                            <th>PID</th>
-                            <th>Threads</th>
-                            <th>Version</th>
-                            <th>Priority</th>
-                        </tr>
-                        <tr style="text-align:center;" title="Moving to new repository!">
-                            <td>tune.exe</td>
-                            <td colspan="4">(currently private)</td>
-                        </tr>
-                    </table>
-                    <table class="task-list">
-                        <colgroup>
-                            <col width="100" />
-                            <col width="070" />
-                            <col width="050" />
-                            <col width="050" />
-                            <col width="050" />
-                        </colgroup>
-                    </table>
+                    <div id="projects" style="width: 400px;">
+                        <table class="task-list-header">
+                            <colgroup>
+                                <col width="100" />
+                                <col width="070" />
+                                <col width="050" />
+                                <col width="050" />
+                                <col width="050" />
+                            </colgroup>
+                            <tr>
+                                <th>Process name</th>
+                                <th>PID</th>
+                                <th>Threads</th>
+                                <th>Version</th>
+                                <th>Priority</th>
+                            </tr>
+                            <tr style="text-align:center;" title="Moving to new repository!">
+                                <td>tune.exe</td>
+                                <td colspan="4">(currently private)</td>
+                            </tr>
+                        </table>
+                        <table class="task-list">
+                            <colgroup>
+                                <col width="100" />
+                                <col width="070" />
+                                <col width="050" />
+                                <col width="050" />
+                                <col width="050" />
+                            </colgroup>
+                        </table>
+                    </div>
                 </div>
                 <div class="button-group" style="justify-content: flex-end;">
                     <div class="button" id="end-process-btn">End Process</div>

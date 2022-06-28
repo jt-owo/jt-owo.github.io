@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "target": "ES6",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "alwaysStrict": true,
+        "sourceMap": true,
+        "outFile": "./ts.js",
+        "lib": [
+            "esnext",
+            "DOM"
+        ],
+    },
+    "include": [
+        "./src/*.ts",
+    ],
+    "exclude": [
+        "**/*.spec.ts"
+    ]
+}

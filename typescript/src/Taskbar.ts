@@ -1,8 +1,8 @@
 class Taskbar {
     /**
-     * Initializes the Taskbar. (Menu Button + Clock)
+     * Initializes the taskbar.
      */
-    static init() {
+    public static init() {
         const startButton = document.getElementById("start-button");
         if (startButton) {
             startButton.addEventListener('click', () => {
@@ -10,9 +10,9 @@ class Taskbar {
             });
         }
 
-        Taskbar.clock();
+        Taskbar.updateClock();
         setInterval(() => {
-            Taskbar.clock();
+            Taskbar.updateClock();
         }, 1000);
     }
 
@@ -20,14 +20,14 @@ class Taskbar {
      * Adds a new element to the taskbar.
      * @param {DragWindow} win 
      */
-    static add(win, autoSelect = true) {
+    public static addItem(win: DragWindow, autoSelect = true) {
         const div = document.createElement("div");
         div.classList.add("taskbar-item");
-        div.id = "taskbar_" + win.id;
+        div.id = "taskbar_" + win.ID;
 
         const i = document.createElement("i");
         i.classList.add("icon");
-        i.classList.add(win.icon);
+        i.classList.add(win.Icon);
 
         div.appendChild(i);
 
@@ -48,7 +48,7 @@ class Taskbar {
      * Toggles the visiblity of the menu.
      * @param {boolean} forceClose - True if the menu should be closed no matter what the current state is.
      */
-    static toggleStartMenu(forceClose = false) {
+    public static toggleStartMenu(forceClose: boolean = false) {
         const startMenu = document.getElementById("menu");
         const startButton = document.getElementById("start-button");
         if (!startMenu || !startButton) return;
@@ -65,7 +65,7 @@ class Taskbar {
     /**
      * Removes the focus of the current focused taskbar item.
      */
-    static removeCurrentFocus() {
+    public static removeCurrentFocus() {
         const activeItem = document.querySelector(".focused");
         if (activeItem) {
             activeItem.classList.remove("focused");
@@ -74,22 +74,24 @@ class Taskbar {
 
     /**
      * Selects/Deselects an item depending on the focused state.
-     * @param {Event} e  Click event.
+     * @param {MouseEvent} e  Event.
      */
-    static onTaskbarItemClick(e) {
+    public static onTaskbarItemClick(e: MouseEvent) {
         Taskbar.removeCurrentFocus();
         Taskbar.toggleStartMenu(true);
 
         // If icon is clicked pick the parent element as target.
-        let target = e.target;
-        if (target.tagName === "I") {
+        let target: HTMLElement | null = e.target as HTMLElement;
+
+        // User can click on the icon inside of the button, check for that.
+        if (target?.tagName === "I") {
             target = target.parentElement;
         }
 
-        if (target.classList.contains("focused")) {
-            Taskbar.onItemDeselect(target);
+        if (target?.classList.contains("focused")) {
+            Taskbar.onItemDeselect(target as HTMLDivElement);
         } else {
-            Taskbar.onItemSelect(target);
+            Taskbar.onItemSelect(target as HTMLDivElement);
         }
     }
 
@@ -97,31 +99,31 @@ class Taskbar {
      * Selects a taskbar item and set active focus.
      * @param {HTMLDivElement} item Item to select.
      */
-    static onItemSelect(item) {
+    public static onItemSelect(item: HTMLDivElement) {
         Taskbar.removeCurrentFocus();
         item.classList.add("focused");
 
         // Interop with Window.js
         if (_WINDOW_LIST && Object.keys(_WINDOW_LIST).length > 0) {
-            const win = _WINDOW_LIST[item.id.substring("taskbar_".length)];
+            const win = _WINDOW_LIST.find(x => x.ID === item.id.substring("taskbar_".length));
             if (win) win.focus(true);
         }
     }
 
     /**
-     * Deselects a taskbar item
-     * @param {HTMLDivElement} item 
+     * Deselects a taskbar item.
+     * @param {HTMLDivElement} item Item to deselect.
      */
-    static onItemDeselect(item) {
+    public static onItemDeselect(item: HTMLDivElement) {
         item.classList.remove("focused");
     }
 
     /**
-     * Update time string in taskbar.
+     * Updates time string in taskbar.
      */
-    static clock() {
+    public static updateClock() {
         const timeText = document.getElementById("taskbar-time");
-        if (!timeText) return
+        if(!timeText) return;
         timeText.innerHTML = `${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     }
 }

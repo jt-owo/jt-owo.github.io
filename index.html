@@ -15,9 +15,7 @@
     <link rel="stylesheet" href="./assets/styles/icon.css">
     <link rel="stylesheet" href="./assets/styles/mobile.css"
         media='screen and (min-width: 200px) and (max-width: 700px)'>
-    <script src="./scripts/Platform.js"></script>
-    <script src="./scripts/Taskbar.js"></script>
-    <script src="./scripts/Window.js"></script>
+    <script src="./typescript/ts.js"></script>
     <title>jt-owo | Home</title>
 </head>
 <script>
@@ -35,14 +33,41 @@
     });
 
     function openComputer() {
-        DragWindow.show("About Me", document.getElementById("aboutMe"), "computer", 100, 50);
+        DragWindow.show({
+            title: "About Me",
+            width: 0,
+            height: 0,
+            child: document.getElementById("aboutMe"),
+            icon: "computer",
+            x: 100,
+            y: 50,
+            fitSizeToContent: false
+        });
     }
 
     function openProjects() {
         if (Platform.isMobile) {
-            DragWindow.show("My Projects", document.getElementById("projects"), "dir-closed", 100, 300, 100, 100, false);
+            DragWindow.show({
+                title: "My Projects",
+                width: 100,
+                height: 100,
+                child: document.getElementById("projects"),
+                icon: "dir-closed",
+                x: 100,
+                y: 300,
+                fitSizeToContent: false
+            });
         } else {
-            DragWindow.show("My Projects", document.getElementById("projects"), "dir-closed", 600, 300);
+            DragWindow.show({
+                title: "My Projects",
+                width: 200,
+                height: 200,
+                child: document.getElementById("projects"),
+                icon: "dir-closed",
+                x: 600,
+                y: 300,
+                fitSizeToContent: true
+            });
         }
     }
 
@@ -84,42 +109,6 @@
                     <div class="button minimize"></div>
                     <div class="button maximize"></div>
                     <div class="button close"></div>
-                </div>
-            </div>
-            <div class="win-content">
-                <div class="container">
-                    <!--                         <table class="task-list-header">
-                                                                        <colgroup>
-                                                                            <col width="100" />
-                                                                            <col width="070" />
-                                                                            <col width="050" />
-                                                                            <col width="050" />
-                                                                            <col width="050" />
-                                                                        </colgroup>
-                                                                        <tr>
-                                                                            <th>Process name</th>
-                                                                            <th>PID</th>
-                                                                            <th>Threads</th>
-                                                                            <th>Version</th>
-                                                                            <th>Priority</th>
-                                                                        </tr>
-                                                                        <tr style="text-align:center;" title="Moving to new repository!">
-                                                                            <td>tune.exe</td>
-                                                                            <td colspan="4">(currently private)</td>
-                                                                        </tr>
-                                                                    </table>
-                                                                    <table class="task-list">
-                                                                        <colgroup>
-                                                                            <col width="100" />
-                                                                            <col width="070" />
-                                                                            <col width="050" />
-                                                                            <col width="050" />
-                                                                            <col width="050" />
-                                                                        </colgroup>
-                                                                    </table> -->
-                </div>
-                <div class="button-group" style="justify-content: flex-end;">
-                    <div class="button" id="end-process-btn">End Process</div>
                 </div>
             </div>
             <div class="win-status-bar">
@@ -177,7 +166,7 @@
         <div id="aboutMe" style="width: 200px;">
             <img src="https://avatars.githubusercontent.com/u/46834462" width="228"><br />
             <p style="padding:5px; font-size:14px">
-                Hello, I'm jt (or Johnny)<br />
+                hello, i'm jt (or Johnny)<br />
                 i like programming and video games<br />
             </p>
         </div>

@@ -11,7 +11,13 @@
     border-bottom: 2px solid #4E4E4E;
 }
 
-#taskbar .taskbar-item {
+#taskbar #taskbar-items {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}
+
+#taskbar #taskbar-items .taskbar-item {
     width: var(--t-item-h);
     height: var(--t-item-h);
     line-height: var(--t-item-h);
@@ -25,12 +31,12 @@
     padding: 2px 0 0 1px;
 }
 
-#taskbar .taskbar-item:hover {
+#taskbar #taskbar-items .taskbar-item:hover {
     background-color: var(--silver-hover);
 }
 
-#taskbar .taskbar-item.focused,
-#taskbar .taskbar-item:active {
+#taskbar #taskbar-items .taskbar-item.focused,
+#taskbar #taskbar-items .taskbar-item:active {
     border-top: 2px solid var(--black);
     border-left: 2px solid var(--black);
     border-right: 2px solid var(--white);

@@ -101,6 +101,21 @@
     padding-right: 2px;
 }
 
-#task-manager.win {
-    min-width: 400px;
+#desktop .win .desktop-item {
+    height: var(--d-item-h);
+    width: var(--d-item-w);
+
+    text-align: center;
+
+    user-select: none;
+
+    padding: 7px 0;
+    padding-top: 5px;
+    color: var(--font-dark);
+
+    border: 1px solid white;
+}
+
+#desktop .win .desktop-item:hover {
+    border: 1px solid black;
 }

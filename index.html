@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./assets/styles/variables.css">
     <link rel="stylesheet" href="./assets/styles/main.css">
     <link rel="stylesheet" href="./assets/styles/desktop.css">
@@ -12,26 +13,34 @@
     <link rel="stylesheet" href="./assets/styles/menu.css">
     <link rel="stylesheet" href="./assets/styles/window.css">
     <link rel="stylesheet" href="./assets/styles/icon.css">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <script src="./scripts/Taskbar.js"></script>
     <script src="./scripts/Window.js"></script>
-    <title>jt-owo</title>
+    <title>jt-owo | Home</title>
 </head>
 <script>
     window.addEventListener('DOMContentLoaded', (event) => {
+        Taskbar.init();
+
         const desktop = document.getElementById("desktop");
+        if (desktop) {
+            desktop.addEventListener('click', () => {
+                Taskbar.toggleStartMenu(true);
+            });
+        }
 
-        desktop.addEventListener('click', () => {
-            closeStartMenu();
-            removeCurrentFocus();
-        });
-
-        initTaskbar();
+        openProjects();
     });
 
+    function openComputer() {
+        DragWindow.show("About Me", null, "computer");
+    }
+
     function openProjects() {
-        const projects = document.getElementById("projects");
-        DragWindow.show("My Projects", projects);
+        DragWindow.show("My Projects", document.getElementById("projects"), "dir-closed");
+    }
+
+    function openGithub(uri) {
+        window.open("https://github.com/jt-owo/" + uri, "_blank").focus();
     }
 </script>
 
@@ -43,7 +52,7 @@
                 <span>Recycle Bin</span>
             </div>
         </div>
-        <div class="desktop-item">
+        <div class="desktop-item" onclick="openComputer();">
             <div class="icon-container">
                 <i class="icon computer"></i>
                 <span>Computer</span>
@@ -72,37 +81,35 @@
             </div>
             <div class="win-content">
                 <div class="container">
-                    <div id="projects" style="width: 400px;">
-                        <table class="task-list-header">
-                            <colgroup>
-                                <col width="100" />
-                                <col width="070" />
-                                <col width="050" />
-                                <col width="050" />
-                                <col width="050" />
-                            </colgroup>
-                            <tr>
-                                <th>Process name</th>
-                                <th>PID</th>
-                                <th>Threads</th>
-                                <th>Version</th>
-                                <th>Priority</th>
-                            </tr>
-                            <tr style="text-align:center;" title="Moving to new repository!">
-                                <td>tune.exe</td>
-                                <td colspan="4">(currently private)</td>
-                            </tr>
-                        </table>
-                        <table class="task-list">
-                            <colgroup>
-                                <col width="100" />
-                                <col width="070" />
-                                <col width="050" />
-                                <col width="050" />
-                                <col width="050" />
-                            </colgroup>
-                        </table>
-                    </div>
+                    <!--                         <table class="task-list-header">
+                                                                        <colgroup>
+                                                                            <col width="100" />
+                                                                            <col width="070" />
+                                                                            <col width="050" />
+                                                                            <col width="050" />
+                                                                            <col width="050" />
+                                                                        </colgroup>
+                                                                        <tr>
+                                                                            <th>Process name</th>
+                                                                            <th>PID</th>
+                                                                            <th>Threads</th>
+                                                                            <th>Version</th>
+                                                                            <th>Priority</th>
+                                                                        </tr>
+                                                                        <tr style="text-align:center;" title="Moving to new repository!">
+                                                                            <td>tune.exe</td>
+                                                                            <td colspan="4">(currently private)</td>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table class="task-list">
+                                                                        <colgroup>
+                                                                            <col width="100" />
+                                                                            <col width="070" />
+                                                                            <col width="050" />
+                                                                            <col width="050" />
+                                                                            <col width="050" />
+                                                                        </colgroup>
+                                                                    </table> -->
                 </div>
                 <div class="button-group" style="justify-content: flex-end;">
                     <div class="button" id="end-process-btn">End Process</div>
@@ -117,9 +124,7 @@
     </div>
     <div id="taskbar">
         <div id="start-button">jt-owo</div>
-        <div class="taskbar-item"><i class="icon computer"></i></div>
-        <div class="taskbar-item"><i class="icon console"></i></div>
-        <div class="taskbar-item"><i class="icon dir-closed"></i></div>
+        <div id="taskbar-items"></div>
         <div id="taskbar-system-tray">
             <span id="taskbar-time"></span>
         </div>
@@ -150,6 +155,17 @@
             <div class="menu-item icon run">Run</div>
             <div class="menu-item icon logoff">Log off</div>
             <div class="menu-item icon shutdown">Shutdown</div>
+        </div>
+    </div>
+
+    <div style="display: none;">
+        <div id="projects" style="width: 400px; padding-left:5px;padding-top:5px">
+            <div class="desktop-item" onclick="openGithub('tune')">
+                <div class="icon-container">
+                    <i class="icon tune"></i>
+                    <span>tune.</span>
+                </div>
+            </div>
         </div>
     </div>
 </body>

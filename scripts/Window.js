@@ -1,5 +1,5 @@
 // List of all window instances.
-const _WINODW_LIST = [];
+const _WINDOW_LIST = [];
 const DRAG_WINDOW_ENABLE_LOG = false;
 
 function newGuid() {
@@ -17,12 +17,13 @@ class DragWindow {
      * @param {number} height Height of the window.
      * @param {*} child Children of the window.
      */
-    constructor(title, width, height, child = null) {
+    constructor(title, width, height, child = null, icon) {
         this.id = "win_" + newGuid();
         this.title = title;
         this.width = width;
         this.height = height;
         this.child = child;
+        this.icon = icon;
 
         this.isDragging = false;
         this.isHidden = false;
@@ -33,18 +34,21 @@ class DragWindow {
 
         this.createDOM();
         this.addEventListeners();
-        //document.querySelector("#desktop")
-        document.body.appendChild(this.element);
+        document.querySelector("#desktop").appendChild(this.element);
+
         this.updateUI();
     }
 
+    /**
+     * Creates the DOM elements required for the window.
+     */
     createDOM() {
         this.element = document.createElement("div");
         this.element.id = this.id;
         this.element.classList.add('win');
         this.element.style.minWidth = this.width + 'px';
 
-        // Create title bar
+        // Create titlebar
         this.titlebar = document.createElement("div");
         this.titlebar.classList.add('win-title');
 
@@ -67,7 +71,7 @@ class DragWindow {
         this.titlebar_controls_close.classList.add('button');
         this.titlebar_controls_close.classList.add('close');
 
-        // Append Titlebar
+        // Append titlebar
         this.titlebar_controls.appendChild(this.titlebar_controls_minimize);
         this.titlebar_controls.appendChild(this.titlebar_controls_maximize);
         this.titlebar_controls.appendChild(this.titlebar_controls_close);
@@ -85,17 +89,24 @@ class DragWindow {
         this.content_container.classList.add('container');
         this.content_container.style.minHeight = this.height + 'px';
 
+        // Append window content
         if (this.child) {
             this.content_container.appendChild(this.child);
         }
 
         this.content.appendChild(this.content_container);
-
-        // Append content
         this.element.appendChild(this.content);
     }
 
+    /**
+     * Adds the event listeners required for the window.
+     */
     addEventListeners() {
+        // Window
+        this.element.addEventListener('mousedown', () => {
+            this.focus();
+        });
+
         // Title bar
         this.titlebar_controls_minimize.addEventListener('click', () => {
             this.minimize();
@@ -109,6 +120,7 @@ class DragWindow {
             this.onMouseDown(e);
         })
 
+        // Document
         document.addEventListener('mousemove', (e) => {
             this.onMouseMove(e);
         });
@@ -119,7 +131,7 @@ class DragWindow {
     }
 
     /**
-     * Update window state and position.
+     * Updates window state and position.
      */
     updateUI() {
         if (this.isHidden) {
@@ -132,25 +144,45 @@ class DragWindow {
         this.element.style.left = this.x + 'px';
     }
 
+    /**
+     * Minimizes the window to taskbar.
+     */
     minimize() {
         this.isHidden = true;
         this.updateUI();
-        DragWindow.log(`Window[${this.id}}] minimized`);
+
+        Taskbar.removeCurrentFocus();
+
+        DragWindow.log(`Window[${this.id}] minimized`);
     }
 
+    /**
+     * Closes the window.
+     */
     close() {
         this.element.remove();
-        _WINODW_LIST.splice(this.id, 1);
-        DragWindow.log(`Window[${this.id}}] closed`);
+        _WINDOW_LIST.splice(this.id, 1);
+        DragWindow.log(`Window[${this.id}] closed`);
+
+        // Interop Taskbar.js
+        const taskbarItem = document.querySelector(`#taskbar_${this.id}`);
+        taskbarItem.remove();
     }
 
+    /**
+     * Handles the drop.
+     */
     onMouseUp() {
         if (this.isDragging) {
             this.isDragging = false;
-            DragWindow.log(`Window[${this.id}}] drag end`);
+            DragWindow.log(`Window[${this.id}] drag end`);
         }
     }
 
+    /**
+     * Handles the drag start.
+     * @param {Event} e Event
+     */
     onMouseDown(e) {
         const isTitlebar = e.target === this.titlebar;
         const isText = e.target === this.titlebar_text;
@@ -160,9 +192,13 @@ class DragWindow {
         this.xDiff = e.pageX - this.x;
         this.yDiff = e.pageY - this.y;
 
-        DragWindow.log(`Window[${this.id}}] drag start`);
+        DragWindow.log(`Window[${this.id}] drag start`);
     }
 
+    /**
+     * Handles the drag.
+     * @param {Event} e Event
+     */
     onMouseMove(e) {
         if (!this.isDragging) return;
 
@@ -185,24 +221,49 @@ class DragWindow {
         this.updateUI();
     }
 
+    /**
+     * Sets the focus to this window.
+     * @param {boolean} fromTaskbar If the focus method was called from the taskbar.
+     */
+    focus(fromTaskbar = false) {
+        this.isHidden = false;
+
+        Object.values(_WINDOW_LIST).forEach((item, index) => {
+            item.element.style.zIndex = 0
+        });
+        this.element.style.zIndex = 1;
+
+        // Taskbar interop to focus the taskbar element when the window was clicked.
+        if (!fromTaskbar) {
+            const taskbarItem = document.querySelector(`#taskbar_${this.id}`);
+            Taskbar.onItemSelect(taskbarItem);
+        }
+
+        this.updateUI();
+    }
+
+    /**
+     * Log wrapper function
+     * @param {*} message Log message.
+     */
     static log(message) {
         if (!DRAG_WINDOW_ENABLE_LOG) return;
         console.log(message);
     }
 
     /**
-     * Open a new DragWindow.
+     * Opens a new DragWindow.
      * @param {string} title Title of the window.
      * @param {HTMLElement} child Main content of the window.
      * @param {number} _width Width of the window.
      * @param {number} _height Height of the window.
-     * @param {boolean} useAutoSize Should window fit to contentsize.
+     * @param {boolean} fitToContentSize Should window dimensions fit to contentsize.
      */
-    static show(title, child = null, _width = 200, _height = 200, useAutoSize = true) {
-        const clonedChild = child.cloneNode(true);
+    static show(title, child = null, icon, _width = 200, _height = 200, fitToContentSize = true) {
+        const clonedChild = child !== null ? child.cloneNode(true) : null;
 
         let width, height;
-        if (useAutoSize && child !== null) {
+        if (fitToContentSize && child !== null) {
             width = parseInt(clonedChild.style.width);
             height = parseInt(clonedChild.style.height);
         }
@@ -215,8 +276,9 @@ class DragWindow {
             height = _height;
         }
 
-        const newWin = new DragWindow(title, width + 20, height, clonedChild);
-        _WINODW_LIST[newWin.id] = newWin;
-        DragWindow.log(`Window[${newWin.id}}] created`);
+        const newWin = new DragWindow(title, width + 20, height, clonedChild, icon);
+        _WINDOW_LIST[newWin.id] = newWin;
+        DragWindow.log(`Window[${newWin.id}] created`);
+        Taskbar.add(newWin);
     }
 }

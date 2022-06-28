@@ -19,6 +19,10 @@ body {
     background-color: teal;
 }
 
+img {
+    -webkit-user-drag: none;
+}
+
 div.button-group {
     align-items: center;
     display: flex;

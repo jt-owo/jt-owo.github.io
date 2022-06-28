@@ -2,6 +2,7 @@
 const _WINDOW_LIST = [];
 const DRAG_WINDOW_ENABLE_LOG = false;
 
+//https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
 function newGuid() {
     var S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -17,7 +18,7 @@ class DragWindow {
      * @param {number} height Height of the window.
      * @param {*} child Children of the window.
      */
-    constructor(title, width, height, child = null, icon) {
+    constructor(title, width, height, posX, posY, child = null, icon) {
         this.id = "win_" + newGuid();
         this.title = title;
         this.width = width;
@@ -29,8 +30,8 @@ class DragWindow {
         this.isHidden = false;
         this.xDiff = 0;
         this.yDiff = 0;
-        this.x = 500;
-        this.y = 325;
+        this.x = posX;
+        this.y = posY;
 
         this.createDOM();
         this.addEventListeners();
@@ -46,7 +47,7 @@ class DragWindow {
         this.element = document.createElement("div");
         this.element.id = this.id;
         this.element.classList.add('win');
-        this.element.style.minWidth = this.width + 'px';
+        this.element.style.minWidth = this.width + 10 + 'px';
 
         // Create titlebar
         this.titlebar = document.createElement("div");
@@ -73,7 +74,7 @@ class DragWindow {
 
         // Append titlebar
         this.titlebar_controls.appendChild(this.titlebar_controls_minimize);
-        this.titlebar_controls.appendChild(this.titlebar_controls_maximize);
+        //this.titlebar_controls.appendChild(this.titlebar_controls_maximize);
         this.titlebar_controls.appendChild(this.titlebar_controls_close);
 
         this.titlebar.appendChild(this.titlebar_text);
@@ -108,24 +109,44 @@ class DragWindow {
         });
 
         // Title bar
-        this.titlebar_controls_minimize.addEventListener('click', () => {
+        this.titlebar_controls_minimize.addEventListener('click', (e) => {
             this.minimize();
         });
+
+        this.titlebar_controls_minimize.addEventListener('touchend', () => {
+            this.minimize();
+        })
 
         this.titlebar_controls_close.addEventListener('click', () => {
             this.close();
         });
 
+        this.titlebar_controls_close.addEventListener('touchend', () => {
+            this.close();
+        });
+
         this.titlebar.addEventListener('mousedown', (e) => {
             this.onMouseDown(e);
-        })
+        });
+
+        this.titlebar.addEventListener('touchstart', (e) => {
+            this.onTouchStart(e);
+        });
 
         // Document
         document.addEventListener('mousemove', (e) => {
             this.onMouseMove(e);
         });
 
+        document.addEventListener('touchmove', (e) => {
+            this.onTouchMove(e);
+        });
+
         document.addEventListener('mouseup', () => {
+            this.onMouseUp()
+        });
+
+        document.addEventListener('touchend', () => {
             this.onMouseUp()
         });
     }
@@ -196,8 +217,28 @@ class DragWindow {
     }
 
     /**
+     * Handles the drag start
+     * @param {TouchEvent} e Event
+     */
+    onTouchStart(e) {
+        e.preventDefault();
+
+        const lastTouch = e.changedTouches[0];
+
+        const isTitlebar = lastTouch.target === this.titlebar;
+        const isText = lastTouch.target === this.titlebar_text;
+        if (!isTitlebar && !isText) return;
+
+        this.isDragging = true;
+        this.xDiff = lastTouch.pageX - this.x;
+        this.yDiff = lastTouch.pageY - this.y;
+
+        DragWindow.log(`Window[${this.id}] touch start`);
+    }
+
+    /**
      * Handles the drag.
-     * @param {Event} e Event
+     * @param {MouseEvent} e Event
      */
     onMouseMove(e) {
         if (!this.isDragging) return;
@@ -212,6 +253,34 @@ class DragWindow {
 
         const y = Math.min(
             Math.max(0, e.pageY - this.yDiff),
+            window.innerHeight - clientHeight
+        );
+
+        this.x = x;
+        this.y = y;
+
+        this.updateUI();
+    }
+
+    /**
+     * Handles the drag
+     * @param {TouchEvent} e Event
+     */
+    onTouchMove(e) {
+        if (!this.isDragging) return;
+
+        const clientWidth = this.element.clientWidth;
+        const clientHeight = this.element.clientHeight;
+
+        const lastTouch = e.changedTouches[0];
+
+        const x = Math.min(
+            Math.max(0, lastTouch.pageX - this.xDiff),
+            window.innerWidth - clientWidth
+        );
+
+        const y = Math.min(
+            Math.max(0, lastTouch.pageY - this.yDiff),
             window.innerHeight - clientHeight
         );
 
@@ -252,14 +321,14 @@ class DragWindow {
     }
 
     /**
-     * Opens a new DragWindow.
+     * Opens a new window.
      * @param {string} title Title of the window.
      * @param {HTMLElement} child Main content of the window.
      * @param {number} _width Width of the window.
      * @param {number} _height Height of the window.
      * @param {boolean} fitToContentSize Should window dimensions fit to contentsize.
      */
-    static show(title, child = null, icon, _width = 200, _height = 200, fitToContentSize = true) {
+    static show(title, child = null, icon, posX = 0, posY = 0, _width = 200, _height = 200, fitToContentSize = true) {
         const clonedChild = child !== null ? child.cloneNode(true) : null;
 
         let width, height;
@@ -276,7 +345,8 @@ class DragWindow {
             height = _height;
         }
 
-        const newWin = new DragWindow(title, width + 20, height, clonedChild, icon);
+        // FIXME: Add padding remove +20
+        const newWin = new DragWindow(title, width + 20, height, posX, posY, clonedChild, icon);
         _WINDOW_LIST[newWin.id] = newWin;
         DragWindow.log(`Window[${newWin.id}] created`);
         Taskbar.add(newWin);

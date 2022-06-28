@@ -4,6 +4,8 @@
     display: flex;
     flex-flow: row;
 
+    z-index: 99;
+
     font-size: 12px;
     padding: 2px;
     box-shadow: inset 1px 0 var(--white);

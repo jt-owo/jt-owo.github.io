@@ -15,7 +15,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 3px 2px 3px 3px;
-    background: linear-gradient(90deg, var(--win-blue), var(--win-light-blue));
+    background: linear-gradient(90deg, var(--window-blue), var(--window-light-blue));
 }
 
 .win .win-title .win-title-text {

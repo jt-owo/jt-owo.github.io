@@ -9,6 +9,7 @@ html,
 body {
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -16,7 +17,7 @@ body {
     flex-flow: column;
     flex-wrap: nowrap;
 
-    background-color: teal;
+    background-color: var(--os-bg);
 }
 
 img {

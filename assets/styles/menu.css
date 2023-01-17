@@ -19,7 +19,7 @@
 
 #menu .menu-sidebar {
     width: 25px;
-    background: linear-gradient(to bottom, var(--win-blue), var(--win-light-blue));
+    background: linear-gradient(to bottom, var(--window-blue), var(--window-light-blue));
 }
 
 #menu .menu-sidebar .menu-text {
@@ -40,7 +40,7 @@
 }
 
 #menu .menu-item:hover {
-    background-color: var(--win-blue);
+    background-color: var(--window-blue);
     color: var(--font-light);
 }
 
@@ -85,6 +85,6 @@
 }
 
 .submenu .submenu-content .submenu-item:hover {
-    background-color: var(--win-blue);
+    background-color: var(--window-blue);
     color: var(--font-light);
 }

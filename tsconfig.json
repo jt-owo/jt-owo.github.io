@@ -8,7 +8,9 @@
         "preserveConstEnums": true,
         "alwaysStrict": true,
         "sourceMap": true,
-        "outFile": "./ts.js",
+        "declaration": true,
+        "declarationMap": true,
+        "outFile": "./dist/ts.js",
         "lib": [
             "esnext",
             "DOM"

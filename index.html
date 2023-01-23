@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./assets/styles/taskbar.css">
     <link rel="stylesheet" href="./assets/styles/menu.css">
     <link rel="stylesheet" href="./assets/styles/window.css">
+    <link rel="stylesheet" href="./assets/styles/apps.css">
     <link rel="stylesheet" href="./assets/styles/icon.css">
     <link rel="stylesheet" href="./assets/styles/mobile.css"
         media='screen and (min-width: 200px) and (max-width: 700px)'>
@@ -22,23 +23,21 @@
     window.addEventListener('DOMContentLoaded', (event) => {
         Taskbar.init();
 
-        const desktop = document.getElementById("desktop");
+        const desktop = document.querySelector('#desktop');
         if (desktop) {
             desktop.addEventListener('click', () => {
                 Taskbar.toggleStartMenu(true);
             });
         }
 
-        openComputer();
+        openAboutMe();
     });
 
-    function openComputer() {
+    function openAboutMe() {
         DragWindow.show({
             title: "About Me",
-            width: 0,
-            height: 0,
-            child: document.getElementById("aboutMe"),
-            icon: "computer",
+            child: Programs.ABOUT_ME,
+            icon: ProgramIcons.COMPUTER,
             x: 100,
             y: 50,
             fitSizeToContent: false
@@ -46,24 +45,27 @@
     }
 
     function openProjects() {
+        const winOptions = {
+            title: "My Projects",
+            child: Programs.PROJECTS,
+            icon: ProgramIcons.DIR_CLOSED,
+            allowMaximize: true
+        }
+
         if (Platform.isMobile) {
             DragWindow.show({
-                title: "My Projects",
+                ...winOptions,
                 width: 100,
                 height: 100,
-                child: document.getElementById("projects"),
-                icon: "dir-closed",
                 x: 100,
                 y: 300,
                 fitSizeToContent: false
             });
         } else {
             DragWindow.show({
-                title: "My Projects",
+                ...winOptions,
                 width: 200,
                 height: 200,
-                child: document.getElementById("projects"),
-                icon: "dir-closed",
                 x: 600,
                 y: 300,
                 fitSizeToContent: true
@@ -73,6 +75,16 @@
 
     function openGithub(uri) {
         window.open("https://github.com/jt-owo/" + uri, "_blank").focus();
+    }
+
+    function shutdown() {
+        const shutdownScreen = document.querySelector('#shutdownScreen');
+        if (!shutdownScreen) return;
+
+        shutdownScreen.classList.add('show');
+        setTimeout(() => {
+            window.close();
+        }, 3e3)
     }
 </script>
 
@@ -84,7 +96,7 @@
                 <span>Recycle Bin</span>
             </div>
         </div>
-        <div class="desktop-item" onclick="openComputer();">
+        <div class="desktop-item" onclick="openAboutMe();">
             <div class="icon-container">
                 <i class="icon computer"></i>
                 <span>Computer</span>
@@ -150,12 +162,18 @@
             <div class="menu-item icon settings">Settings</div>
             <div class="menu-item icon run">Run</div>
             <div class="menu-item icon logoff">Log off</div>
-            <div class="menu-item icon shutdown">Shutdown</div>
+            <div class="menu-item icon shutdown" onclick="shutdown()">Shutdown</div>
         </div>
     </div>
 
-    <div style="display: none;">
-        <div id="projects" style="width: 400px; padding-left:5px;padding-top:5px">
+    <div id="shutdownScreen">
+        <div>
+            Please wait while your 'computer' shuts down.
+        </div>
+    </div>
+
+    <div id="hidden">
+        <div id="projects" style="width: 400px;">
             <div class="desktop-item" onclick="openGithub('tune')">
                 <div class="icon-container">
                     <i class="icon tune"></i>

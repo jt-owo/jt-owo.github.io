@@ -1,3 +1,7 @@
 #projects {
     width: 100px !important;
 }
+
+#shutdownScreen div {
+    font-size: 1.5rem;
+}

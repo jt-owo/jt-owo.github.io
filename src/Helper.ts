@@ -1,3 +1,29 @@
+const _ = (selector: string) => {
+    if (!selector) {
+        console.error("Invalid selector");
+    }
+
+    let query: Element | NodeList | null = document.querySelectorAll(selector);
+
+    if (!query) return undefined;
+
+    if (query.length && query.length == 1) {
+        query = document.querySelector(selector);
+    }
+
+    return query;
+}
+
+enum Programs {
+    ABOUT_ME = 'aboutMe',
+    PROJECTS = 'projects'
+}
+
+enum ProgramIcons {
+    COMPUTER = 'computer',
+    DIR_CLOSED = 'dir-closed'
+}
+
 class Platform {
     /**
      * Determines if the website is running on mobile or not.

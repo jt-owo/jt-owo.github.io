@@ -1,0 +1,9 @@
+#hidden {
+    display: none;
+    visibility: hidden;
+}
+
+#projects {
+    padding-left: 5px;
+    padding-top: 5px;
+}

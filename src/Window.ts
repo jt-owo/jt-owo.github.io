@@ -1,12 +1,13 @@
 // List of all window instances.
 const _WINDOW_LIST: DragWindow[] = [];
-const DRAG_WINDOW_ENABLE_LOG = false;
+const DRAG_WINDOW_ENABLE_LOG = true;
 
 interface IWindowOptions {
     title: string;
     width: number;
     height: number;
-    child: HTMLElement | null;
+    child?: string;
+    allowMaximize: boolean;
     icon: string;
     x: number;
     y: number;
@@ -27,6 +28,8 @@ class DragWindow {
     private yDiff: number;
     private x: number;
     private y: number;
+
+    private allowMaximize: boolean;
 
     private element: HTMLDivElement;
     private titlebar: HTMLDivElement;
@@ -50,14 +53,23 @@ class DragWindow {
         return this.element;
     }
 
+    public get IsMaximized() {
+        return this.element.classList.contains('fullscreen');
+    }
+
+
     /**
-     * Creates a new instance of DragWindow.
-     * @param {string} title Title of the window.
-     * @param {number} width Width of the window.
-     * @param {number} height Height of the window.
-     * @param {*} child Children of the window.
+     * Initializes a new drag window.
+     * @param {string} title The window's title.
+     * @param {number} width The window's width.
+     * @param {number} height The window's height.
+     * @param {number} posX The window's x pos.
+     * @param {number} posY The window's y pos.
+     * @param {HTMLElement | null} child The child elements inside of the window.
+     * @param {boolean} allowMaximize If the window should have a maximize button.
+     * @param {string} icon The window icon.
      */
-    constructor(title: string, width: number, height: number, posX: number, posY: number, child: HTMLElement | null = null, icon: string) {
+    constructor(title: string, width: number, height: number, posX: number, posY: number, child: HTMLElement | null = null, allowMaximize: boolean = false, icon: string) {
         this.id = "win_" + newGuid();
         this.title = title;
         this.width = width;
@@ -72,14 +84,16 @@ class DragWindow {
         this.x = posX;
         this.y = posY;
 
+        this.allowMaximize = allowMaximize;
+
         this.createDOM();
         this.addEventListeners();
-        
+
         const desktop = document.querySelector("#desktop");
         if (desktop) {
             desktop.appendChild(this.element);
         } else {
-            console.error("Desktop Component not found.");
+            console.error("Desktop component not found.");
         }
 
         this.updateUI();
@@ -119,7 +133,7 @@ class DragWindow {
 
         // Append titlebar
         this.titlebar_controls.appendChild(this.titlebar_controls_minimize);
-        //this.titlebar_controls.appendChild(this.titlebar_controls_maximize);
+        if (this.allowMaximize) this.titlebar_controls.appendChild(this.titlebar_controls_maximize);
         this.titlebar_controls.appendChild(this.titlebar_controls_close);
 
         this.titlebar.appendChild(this.titlebar_text);
@@ -148,7 +162,7 @@ class DragWindow {
      * Adds the event listeners required for the window.
      */
     addEventListeners() {
-        // Window
+        // Window events
         this.element.addEventListener('mousedown', () => {
             this.focus();
         });
@@ -157,13 +171,21 @@ class DragWindow {
             this.focus();
         })
 
-        // Title bar
+        // Title bar events
         this.titlebar_controls_minimize.addEventListener('click', (e) => {
             this.minimize();
         });
 
         this.titlebar_controls_minimize.addEventListener('touchend', () => {
             this.minimize();
+        })
+
+        this.titlebar_controls_maximize.addEventListener('click', () => {
+            this.maximize()
+        })
+
+        this.titlebar_controls_maximize.addEventListener('touchend', () => {
+            this.maximize()
         })
 
         this.titlebar_controls_close.addEventListener('click', () => {
@@ -175,14 +197,16 @@ class DragWindow {
         });
 
         this.titlebar.addEventListener('mousedown', (e) => {
+            if (this.IsMaximized) return;
             this.onMouseDown(e);
         });
 
         this.titlebar.addEventListener('touchstart', (e) => {
+            if (this.IsMaximized) return;
             this.onTouchStart(e);
         });
 
-        // Document
+        // Document events for drag and drop
         document.addEventListener('mousemove', (e) => {
             this.onMouseMove(e);
         });
@@ -226,6 +250,14 @@ class DragWindow {
         DragWindow.log(`Window[${this.id}] minimized`);
     }
 
+    maximize() {
+        if (this.IsMaximized) {
+            this.Element.classList.remove('fullscreen');
+        } else {
+            this.Element.classList.add('fullscreen');
+        }
+    }
+
     /**
      * Closes the window.
      */
@@ -238,7 +270,7 @@ class DragWindow {
         DragWindow.log(`Window[${this.id}] closed`);
 
         // Interop Taskbar.js
-        const taskbarItem = document.querySelector(`#taskbar_${this.id}`);
+        const taskbarItem = Taskbar.getItem(this.id);
         if (taskbarItem) {
             taskbarItem.remove();
         }
@@ -350,14 +382,14 @@ class DragWindow {
      */
     focus(fromTaskbar: boolean = false) {
         this.isHidden = false;
-        
+
         _WINDOW_LIST.forEach(item => { item.element.style.zIndex = "0"; });
         this.element.style.zIndex = "1";
 
         // Taskbar interop to focus the taskbar element when the window was clicked.
         if (!fromTaskbar) {
-            const taskbarItem = document.querySelector(`#taskbar_${this.id}`) as HTMLDivElement;
-            Taskbar.onItemSelect(taskbarItem);
+            const taskbarItem = Taskbar.getItem(this.id);
+            Taskbar.setFocus(taskbarItem);
         }
 
         this.updateUI();
@@ -378,10 +410,15 @@ class DragWindow {
      */
     static show(options: IWindowOptions) {
         let clonedChild: HTMLElement | null = null;
-        if (options.child !== null) {
-            clonedChild = options.child.cloneNode(true) as HTMLElement;
+        if (options.child) {
+            const child = document.getElementById(options.child) as HTMLElement;
+            if (child) {
+                clonedChild = child.cloneNode(true) as HTMLElement;
+            } else {
+                console.error("Cannot find element with id: " + options.child);
+            }
         }
-        
+
         let width, height;
         if (options.fitSizeToContent && clonedChild !== null) {
             width = parseInt(clonedChild.style.width);
@@ -396,9 +433,11 @@ class DragWindow {
             height = options.height;
         }
 
-        const newWin: DragWindow = new DragWindow(options.title, width, height, options.x, options.y, clonedChild, options.icon);
+        const { title, x, y, icon, allowMaximize } = options;
+
+        const newWin: DragWindow = new DragWindow(title, width, height, x, y, clonedChild, allowMaximize, icon);
         _WINDOW_LIST.push(newWin);
-        DragWindow.log(`Window[${newWin.id}] created`);
+        DragWindow.log(`Window[${newWin.id}] created.`);
         Taskbar.addItem(newWin);
     }
 }

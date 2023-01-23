@@ -1,4 +1,26 @@
 "use strict";
+const _ = (selector) => {
+    if (!selector) {
+        console.error("Invalid selector");
+    }
+    let query = document.querySelectorAll(selector);
+    if (!query)
+        return undefined;
+    if (query.length && query.length == 1) {
+        query = document.querySelector(selector);
+    }
+    return query;
+};
+var Programs;
+(function (Programs) {
+    Programs["ABOUT_ME"] = "aboutMe";
+    Programs["PROJECTS"] = "projects";
+})(Programs || (Programs = {}));
+var ProgramIcons;
+(function (ProgramIcons) {
+    ProgramIcons["COMPUTER"] = "computer";
+    ProgramIcons["DIR_CLOSED"] = "dir-closed";
+})(ProgramIcons || (ProgramIcons = {}));
 class Platform {
     static get isMobile() {
         return (/Mobi|Android/i.test(navigator.userAgent));
@@ -21,25 +43,29 @@ class Taskbar {
         Taskbar.updateClock();
         setInterval(() => {
             Taskbar.updateClock();
-        }, 1000);
+        }, 1e3);
     }
     static addItem(win, autoSelect = true) {
-        const div = document.createElement("div");
-        div.classList.add("taskbar-item");
-        div.id = "taskbar_" + win.ID;
-        const i = document.createElement("i");
-        i.classList.add("icon");
-        i.classList.add(win.Icon);
-        div.appendChild(i);
-        div.addEventListener('click', (e) => {
+        const newItem = Taskbar.createItem(win.ID, win.Icon);
+        newItem.addEventListener('click', (e) => {
             Taskbar.onTaskbarItemClick(e);
         });
         const taskbarItemsHost = document.getElementById("taskbar-items");
         if (taskbarItemsHost) {
-            taskbarItemsHost.appendChild(div);
+            taskbarItemsHost.appendChild(newItem);
         }
         if (autoSelect)
-            Taskbar.onItemSelect(div);
+            Taskbar.setFocus(newItem);
+    }
+    static createItem(winID, icon) {
+        const div = document.createElement("div");
+        div.classList.add("taskbar-item");
+        div.id = "taskbar_" + winID;
+        const i = document.createElement("i");
+        i.classList.add("icon");
+        i.classList.add(icon);
+        div.appendChild(i);
+        return div;
     }
     static toggleStartMenu(forceClose = false) {
         const startMenu = document.getElementById("menu");
@@ -56,7 +82,7 @@ class Taskbar {
         }
     }
     static removeCurrentFocus() {
-        const activeItem = document.querySelector(".focused");
+        const activeItem = Taskbar.getFocusedItem();
         if (activeItem) {
             activeItem.classList.remove("focused");
         }
@@ -69,13 +95,13 @@ class Taskbar {
             target = target.parentElement;
         }
         if (target === null || target === void 0 ? void 0 : target.classList.contains("focused")) {
-            Taskbar.onItemDeselect(target);
+            Taskbar.removeFocus(target);
         }
         else {
-            Taskbar.onItemSelect(target);
+            Taskbar.setFocus(target);
         }
     }
-    static onItemSelect(item) {
+    static setFocus(item) {
         Taskbar.removeCurrentFocus();
         item.classList.add("focused");
         if (_WINDOW_LIST && Object.keys(_WINDOW_LIST).length > 0) {
@@ -84,8 +110,14 @@ class Taskbar {
                 win.focus(true);
         }
     }
-    static onItemDeselect(item) {
+    static removeFocus(item) {
         item.classList.remove("focused");
+    }
+    static getFocusedItem() {
+        return document.querySelector(".focused");
+    }
+    static getItem(id) {
+        return document.querySelector(`#taskbar_${id}`);
     }
     static updateClock() {
         const timeText = document.getElementById("taskbar-time");
@@ -95,9 +127,9 @@ class Taskbar {
     }
 }
 const _WINDOW_LIST = [];
-const DRAG_WINDOW_ENABLE_LOG = false;
+const DRAG_WINDOW_ENABLE_LOG = true;
 class DragWindow {
-    constructor(title, width, height, posX, posY, child = null, icon) {
+    constructor(title, width, height, posX, posY, child = null, allowMaximize = false, icon) {
         this.id = "win_" + newGuid();
         this.title = title;
         this.width = width;
@@ -110,6 +142,7 @@ class DragWindow {
         this.yDiff = 0;
         this.x = posX;
         this.y = posY;
+        this.allowMaximize = allowMaximize;
         this.createDOM();
         this.addEventListeners();
         const desktop = document.querySelector("#desktop");
@@ -117,7 +150,7 @@ class DragWindow {
             desktop.appendChild(this.element);
         }
         else {
-            console.error("Desktop Component not found.");
+            console.error("Desktop component not found.");
         }
         this.updateUI();
     }
@@ -129,6 +162,9 @@ class DragWindow {
     }
     get Element() {
         return this.element;
+    }
+    get IsMaximized() {
+        return this.element.classList.contains('fullscreen');
     }
     createDOM() {
         this.element = document.createElement("div");
@@ -152,6 +188,8 @@ class DragWindow {
         this.titlebar_controls_close.classList.add('button');
         this.titlebar_controls_close.classList.add('close');
         this.titlebar_controls.appendChild(this.titlebar_controls_minimize);
+        if (this.allowMaximize)
+            this.titlebar_controls.appendChild(this.titlebar_controls_maximize);
         this.titlebar_controls.appendChild(this.titlebar_controls_close);
         this.titlebar.appendChild(this.titlebar_text);
         this.titlebar.appendChild(this.titlebar_controls);
@@ -180,6 +218,12 @@ class DragWindow {
         this.titlebar_controls_minimize.addEventListener('touchend', () => {
             this.minimize();
         });
+        this.titlebar_controls_maximize.addEventListener('click', () => {
+            this.maximize();
+        });
+        this.titlebar_controls_maximize.addEventListener('touchend', () => {
+            this.maximize();
+        });
         this.titlebar_controls_close.addEventListener('click', () => {
             this.close();
         });
@@ -187,9 +231,13 @@ class DragWindow {
             this.close();
         });
         this.titlebar.addEventListener('mousedown', (e) => {
+            if (this.IsMaximized)
+                return;
             this.onMouseDown(e);
         });
         this.titlebar.addEventListener('touchstart', (e) => {
+            if (this.IsMaximized)
+                return;
             this.onTouchStart(e);
         });
         document.addEventListener('mousemove', (e) => {
@@ -221,6 +269,14 @@ class DragWindow {
         Taskbar.removeCurrentFocus();
         DragWindow.log(`Window[${this.id}] minimized`);
     }
+    maximize() {
+        if (this.IsMaximized) {
+            this.Element.classList.remove('fullscreen');
+        }
+        else {
+            this.Element.classList.add('fullscreen');
+        }
+    }
     close() {
         this.element.remove();
         const toRemoveIndex = _WINDOW_LIST.indexOf(this);
@@ -228,7 +284,7 @@ class DragWindow {
             _WINDOW_LIST.splice(toRemoveIndex, 1);
         }
         DragWindow.log(`Window[${this.id}] closed`);
-        const taskbarItem = document.querySelector(`#taskbar_${this.id}`);
+        const taskbarItem = Taskbar.getItem(this.id);
         if (taskbarItem) {
             taskbarItem.remove();
         }
@@ -289,8 +345,8 @@ class DragWindow {
         _WINDOW_LIST.forEach(item => { item.element.style.zIndex = "0"; });
         this.element.style.zIndex = "1";
         if (!fromTaskbar) {
-            const taskbarItem = document.querySelector(`#taskbar_${this.id}`);
-            Taskbar.onItemSelect(taskbarItem);
+            const taskbarItem = Taskbar.getItem(this.id);
+            Taskbar.setFocus(taskbarItem);
         }
         this.updateUI();
     }
@@ -301,8 +357,14 @@ class DragWindow {
     }
     static show(options) {
         let clonedChild = null;
-        if (options.child !== null) {
-            clonedChild = options.child.cloneNode(true);
+        if (options.child) {
+            const child = document.getElementById(options.child);
+            if (child) {
+                clonedChild = child.cloneNode(true);
+            }
+            else {
+                console.error("Cannot find element with id: " + options.child);
+            }
         }
         let width, height;
         if (options.fitSizeToContent && clonedChild !== null) {
@@ -315,9 +377,10 @@ class DragWindow {
         if (!height) {
             height = options.height;
         }
-        const newWin = new DragWindow(options.title, width, height, options.x, options.y, clonedChild, options.icon);
+        const { title, x, y, icon, allowMaximize } = options;
+        const newWin = new DragWindow(title, width, height, x, y, clonedChild, allowMaximize, icon);
         _WINDOW_LIST.push(newWin);
-        DragWindow.log(`Window[${newWin.id}] created`);
+        DragWindow.log(`Window[${newWin.id}] created.`);
         Taskbar.addItem(newWin);
     }
 }

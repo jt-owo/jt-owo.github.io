@@ -13,7 +13,7 @@ class Taskbar {
         Taskbar.updateClock();
         setInterval(() => {
             Taskbar.updateClock();
-        }, 1000);
+        }, 1e3);
     }
 
     /**
@@ -21,27 +21,39 @@ class Taskbar {
      * @param {DragWindow} win 
      */
     public static addItem(win: DragWindow, autoSelect = true) {
-        const div = document.createElement("div");
-        div.classList.add("taskbar-item");
-        div.id = "taskbar_" + win.ID;
+        const newItem = Taskbar.createItem(win.ID, win.Icon);
 
-        const i = document.createElement("i");
-        i.classList.add("icon");
-        i.classList.add(win.Icon);
-
-        div.appendChild(i);
-
-        div.addEventListener('click', (e) => {
+        newItem.addEventListener('click', (e) => {
             Taskbar.onTaskbarItemClick(e);
         });
 
         const taskbarItemsHost = document.getElementById("taskbar-items");
         if (taskbarItemsHost) {
-            taskbarItemsHost.appendChild(div);
+            taskbarItemsHost.appendChild(newItem);
         }
 
         if (autoSelect)
-            Taskbar.onItemSelect(div);
+            Taskbar.setFocus(newItem);
+    }
+
+    /**
+     * Creates a new taskbar item for a window.
+     * @param {string} winID Window ID.
+     * @param {string} icon Window icon.
+     * @returns New Taskbar item.
+     */
+    public static createItem(winID: string, icon: string) {
+        const div = document.createElement("div");
+        div.classList.add("taskbar-item");
+        div.id = "taskbar_" + winID;
+
+        const i = document.createElement("i");
+        i.classList.add("icon");
+        i.classList.add(icon);
+
+        div.appendChild(i);
+
+        return div;
     }
 
     /**
@@ -66,7 +78,7 @@ class Taskbar {
      * Removes the focus of the current focused taskbar item.
      */
     public static removeCurrentFocus() {
-        const activeItem = document.querySelector(".focused");
+        const activeItem = Taskbar.getFocusedItem();
         if (activeItem) {
             activeItem.classList.remove("focused");
         }
@@ -89,9 +101,9 @@ class Taskbar {
         }
 
         if (target?.classList.contains("focused")) {
-            Taskbar.onItemDeselect(target as HTMLDivElement);
+            Taskbar.removeFocus(target as HTMLDivElement);
         } else {
-            Taskbar.onItemSelect(target as HTMLDivElement);
+            Taskbar.setFocus(target as HTMLDivElement);
         }
     }
 
@@ -99,7 +111,7 @@ class Taskbar {
      * Selects a taskbar item and set active focus.
      * @param {HTMLDivElement} item Item to select.
      */
-    public static onItemSelect(item: HTMLDivElement) {
+    public static setFocus(item: HTMLDivElement) {
         Taskbar.removeCurrentFocus();
         item.classList.add("focused");
 
@@ -114,8 +126,25 @@ class Taskbar {
      * Deselects a taskbar item.
      * @param {HTMLDivElement} item Item to deselect.
      */
-    public static onItemDeselect(item: HTMLDivElement) {
+    public static removeFocus(item: HTMLDivElement) {
         item.classList.remove("focused");
+    }
+
+    /**
+     * Returns the current focused item.
+     * @returns The current focused item.
+     */
+    public static getFocusedItem() {
+        return document.querySelector(".focused");
+    }
+
+    /**
+     * Finds and returns a taskbar item.
+     * @param id ID of the taskbar item.
+     * @returns Taskbar item
+     */
+    public static getItem(id: string) {
+        return document.querySelector(`#taskbar_${id}`) as HTMLDivElement;
     }
 
     /**
@@ -123,7 +152,7 @@ class Taskbar {
      */
     public static updateClock() {
         const timeText = document.getElementById("taskbar-time");
-        if(!timeText) return;
+        if (!timeText) return;
         timeText.innerHTML = `${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     }
 }

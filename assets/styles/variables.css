@@ -21,3 +21,9 @@
     --t-item-h: 28px;
     --t-item-w: 22px;
 }
+
+/** Font by: https://fontsarena.com/created-by/alina-sava/ **/
+@font-face {
+    font-family: W95FA;
+    src: url(../fonts/w95fa.woff);
+}

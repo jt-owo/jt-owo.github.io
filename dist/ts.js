@@ -1,4 +1,47 @@
 "use strict";
+class Desktop {
+    static init() {
+        const desktop = document.querySelector('#desktop');
+        if (desktop) {
+            desktop.addEventListener('click', () => {
+                Taskbar.toggleStartMenu(true);
+            });
+        }
+        else {
+            console.error("Desktop element was not found");
+        }
+    }
+    static addItem(_item) {
+        const desktop = document.querySelector('#desktop');
+        const item = Desktop.createItem(_item.text, _item.icon, _item.onClick);
+        desktop === null || desktop === void 0 ? void 0 : desktop.appendChild(item);
+    }
+    static createItem(_text, _icon, onClick) {
+        const item = document.createElement('div');
+        item.classList.add('desktop-item');
+        const iconContainer = document.createElement('div');
+        iconContainer.classList.add('icon-container');
+        const icon = document.createElement('i');
+        icon.classList.add('icon');
+        icon.classList.add(_icon);
+        const text = document.createElement('span');
+        text.innerHTML = _text;
+        iconContainer.appendChild(icon);
+        iconContainer.appendChild(text);
+        item.appendChild(iconContainer);
+        item.addEventListener('click', onClick);
+        return item;
+    }
+    static shutdown() {
+        const shutdownScreen = document.querySelector('#shutdownScreen');
+        if (!shutdownScreen)
+            return;
+        shutdownScreen.classList.add('show');
+        setTimeout(() => {
+            window.close();
+        }, 3e3);
+    }
+}
 const _ = (selector) => {
     if (!selector) {
         console.error("Invalid selector");
@@ -11,16 +54,6 @@ const _ = (selector) => {
     }
     return query;
 };
-var Programs;
-(function (Programs) {
-    Programs["ABOUT_ME"] = "aboutMe";
-    Programs["PROJECTS"] = "projects";
-})(Programs || (Programs = {}));
-var ProgramIcons;
-(function (ProgramIcons) {
-    ProgramIcons["COMPUTER"] = "computer";
-    ProgramIcons["DIR_CLOSED"] = "dir-closed";
-})(ProgramIcons || (ProgramIcons = {}));
 class Platform {
     static get isMobile() {
         return (/Mobi|Android/i.test(navigator.userAgent));
@@ -127,7 +160,7 @@ class Taskbar {
     }
 }
 const _WINDOW_LIST = [];
-const DRAG_WINDOW_ENABLE_LOG = true;
+const DRAG_WINDOW_ENABLE_LOG = false;
 class DragWindow {
     constructor(title, width, height, posX, posY, child = null, allowMaximize = false, icon) {
         this.id = "win_" + newGuid();

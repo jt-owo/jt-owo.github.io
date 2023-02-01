@@ -1,12 +1,16 @@
+interface IDesktopItem {
+    text: string;
+    icon: string;
+    onClick: () => void;
+}
+declare class Desktop {
+    static init(): void;
+    static addItem(_item: IDesktopItem): void;
+    static createItem(_text: string, _icon: string, onClick: () => void): HTMLDivElement;
+    static shutdown(): void;
+}
 declare const _: (selector: string) => Element | NodeList | null | undefined;
-declare enum Programs {
-    ABOUT_ME = "aboutMe",
-    PROJECTS = "projects"
-}
-declare enum ProgramIcons {
-    COMPUTER = "computer",
-    DIR_CLOSED = "dir-closed"
-}
+declare type ProgramIcon = 'computer' | 'dir-closed' | 'recycleBin' | 'github';
 declare class Platform {
     static get isMobile(): boolean;
 }
@@ -25,7 +29,7 @@ declare class Taskbar {
     static updateClock(): void;
 }
 declare const _WINDOW_LIST: DragWindow[];
-declare const DRAG_WINDOW_ENABLE_LOG = true;
+declare const DRAG_WINDOW_ENABLE_LOG = false;
 interface IWindowOptions {
     title: string;
     width: number;

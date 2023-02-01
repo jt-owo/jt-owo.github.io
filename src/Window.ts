@@ -1,6 +1,6 @@
 // List of all window instances.
 const _WINDOW_LIST: DragWindow[] = [];
-const DRAG_WINDOW_ENABLE_LOG = true;
+const DRAG_WINDOW_ENABLE_LOG = false;
 
 interface IWindowOptions {
     title: string;

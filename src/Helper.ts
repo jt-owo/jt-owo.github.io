@@ -14,15 +14,7 @@ const _ = (selector: string) => {
     return query;
 }
 
-enum Programs {
-    ABOUT_ME = 'aboutMe',
-    PROJECTS = 'projects'
-}
-
-enum ProgramIcons {
-    COMPUTER = 'computer',
-    DIR_CLOSED = 'dir-closed'
-}
+type ProgramIcon = 'computer' | 'dir-closed' | 'recycleBin' | 'github';
 
 class Platform {
     /**

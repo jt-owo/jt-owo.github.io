@@ -102,7 +102,7 @@
 
     function openGithub(uri) {
         let url = "https://github.com/jt-owo/";
-        if (uri) {
+        if (typeof uri === 'string') {
             url += uri;
         }
 

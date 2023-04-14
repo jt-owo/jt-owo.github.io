@@ -20,3 +20,7 @@
 #desktop .desktop-item:hover {
     border: 1px solid lightgray;
 }
+
+.desktop-item.left {
+    float: left;
+}

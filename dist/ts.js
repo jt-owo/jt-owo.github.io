@@ -162,6 +162,18 @@ class Taskbar {
 const _WINDOW_LIST = [];
 const DRAG_WINDOW_ENABLE_LOG = false;
 class DragWindow {
+    get ID() {
+        return this.id;
+    }
+    get Icon() {
+        return this.icon;
+    }
+    get Element() {
+        return this.element;
+    }
+    get IsMaximized() {
+        return this.element.classList.contains('fullscreen');
+    }
     constructor(title, width, height, posX, posY, child = null, allowMaximize = false, icon) {
         this.id = "win_" + newGuid();
         this.title = title;
@@ -186,18 +198,6 @@ class DragWindow {
             console.error("Desktop component not found.");
         }
         this.updateUI();
-    }
-    get ID() {
-        return this.id;
-    }
-    get Icon() {
-        return this.icon;
-    }
-    get Element() {
-        return this.element;
-    }
-    get IsMaximized() {
-        return this.element.classList.contains('fullscreen');
     }
     createDOM() {
         this.element = document.createElement("div");

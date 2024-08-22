@@ -10,7 +10,7 @@ declare class Desktop {
     static shutdown(): void;
 }
 declare const _: (selector: string) => Element | NodeList | null | undefined;
-declare type ProgramIcon = 'computer' | 'dir-closed' | 'recycleBin' | 'github';
+type ProgramIcon = 'computer' | 'dir-closed' | 'recycleBin' | 'github';
 declare class Platform {
     static get isMobile(): boolean;
 }
@@ -68,7 +68,7 @@ declare class DragWindow {
     get Icon(): string;
     get Element(): HTMLDivElement;
     get IsMaximized(): boolean;
-    constructor(title: string, width: number, height: number, posX: number, posY: number, child: HTMLElement | null | undefined, allowMaximize: boolean | undefined, icon: string);
+    constructor(title: string, width: number, height: number, posX: number, posY: number, child: (HTMLElement | null) | undefined, allowMaximize: boolean | undefined, icon: string);
     createDOM(): void;
     addEventListeners(): void;
     updateUI(): void;

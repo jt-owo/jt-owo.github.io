@@ -14,7 +14,7 @@
     padding: 7px 0;
     color: var(--font-light);
 
-    border: 1px solid teal;
+    border: 1px solid var(--os-bg);
 }
 
 #desktop .desktop-item:hover {
